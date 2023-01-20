@@ -1,31 +1,57 @@
 import { Cycle } from "./cycle.ts";
 
-export interface PeriodData {
-  /** The index of the period. */
-  index: number;
-
-  /** Whether or not the period is a work period. */
-  work: boolean;
+export class PomoStamp {
+  /** The amount of elapsed values. */
+  public readonly elapsed: number;
 
   /**
    * The amount of elapsed cycles.
    *
    * Such that the amount of elapsed periods is equal to:
-   * elapsed * cycle.total + period
+   * cycle * this.pomo.cycle.total + remainder
    */
-  cycle: number;
+  public readonly cycle: number;
+
+  /** The amount of elapsed periods. */
+  public readonly remainder: number;
+
+  /** The index of the period in the cycle. */
+  public readonly index: number;
+
+  constructor(
+    public readonly pomo: Pomo,
+    public readonly n: number,
+  ) {
+    this.elapsed = n - pomo.ref;
+    this.cycle = Math.trunc(this.elapsed / pomo.cycle.total);
+    this.remainder = this.elapsed % pomo.cycle.total;
+    this.index = pomo.cycle.at(this.n);
+  }
+
+  /** Whether or not the period is a work period. */
+  public get work(): boolean {
+    return this.index % 2 === 0;
+  }
 
   /** The number remaining until the next period. */
-  until: number;
+  public get until(): number {
+    return this.value - this.remainder;
+  }
 
   /** The value of the period. */
-  value: number;
+  public get value(): number {
+    return this.pomo.cycle.periods[this.index];
+  }
 
   /** The start of the period. */
-  start: number;
+  public get start(): number {
+    return this.n - this.remainder;
+  }
 
   /** The end of the period. */
-  end: number;
+  public get end(): number {
+    return this.start + this.value;
+  }
 }
 
 export class Pomo {
@@ -48,28 +74,8 @@ export class Pomo {
       this.dayLength % this.cycle.total === 0;
   }
 
-  public at(n: number): PeriodData {
-    const elapsed = n - this.ref;
-    const cycle = Math.trunc(elapsed / this.cycle.total);
-    const remainder = elapsed % this.cycle.total;
-    const index = this.cycle.at(elapsed);
-    const work = index % 2 === 0;
-    const value = this.cycle.periods[index];
-    const nextIndex = this.cycle.next(index);
-    const until = this.cycle.data[nextIndex] - remainder;
-    const start = this.cycle.data[index] + (cycle * this.cycle.total) +
-      this.ref;
-    const end = start + value;
-
-    return {
-      index,
-      work,
-      cycle,
-      until,
-      value,
-      start,
-      end,
-    };
+  public at(n: number): PomoStamp {
+    return new PomoStamp(this, n);
   }
 
   public static fromPattern(
