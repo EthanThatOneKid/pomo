@@ -1,4 +1,4 @@
-import { assertEquals } from "./test_deps.ts";
+import { assertEquals } from "./dev_deps.ts";
 
 import { Cycle } from "./cycle.ts";
 

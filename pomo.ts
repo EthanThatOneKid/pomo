@@ -18,6 +18,9 @@ export class PomoStamp {
   /** The index of the period in the cycle. */
   public readonly index: number;
 
+  /** The index of the previous period in the cycle. */
+  public readonly previousIndex: number;
+
   constructor(
     public readonly pomo: Pomo,
     public readonly n: number,
@@ -26,6 +29,7 @@ export class PomoStamp {
     this.cycle = Math.trunc(this.elapsed / pomo.cycle.total);
     this.remainder = this.elapsed % pomo.cycle.total;
     this.index = pomo.cycle.at(this.n);
+    this.previousIndex = pomo.cycle.next(this.index, -1);
   }
 
   /** Whether or not the period is a work period. */
@@ -35,22 +39,23 @@ export class PomoStamp {
 
   /** The number remaining until the next period. */
   public get until(): number {
-    return this.value - this.remainder;
+    return this.duration - this.remainder;
   }
 
-  /** The value of the period. */
-  public get value(): number {
+  /** The duration of the period. */
+  public get duration(): number {
     return this.pomo.cycle.periods[this.index];
   }
 
   /** The start of the period. */
   public get start(): number {
-    return this.n - this.remainder;
+    return this.n - this.remainder +
+      this.pomo.cycle.data[this.index];
   }
 
   /** The end of the period. */
   public get end(): number {
-    return this.start + this.value;
+    return this.start + this.duration;
   }
 }
 
@@ -93,11 +98,20 @@ export class Pomo {
  * parsePattern parses a string of numbers separated by non-digits.
  *
  * Example pattern:
- * "w25b5w25b5w25b10"
+ * "25w5b25w5b25w25b10"
  */
 export function parsePattern(pattern: string): number[] {
   return pattern
     .split(/\D+/)
+    .filter(hasLength)
     .map(Number)
-    .filter(Number.isNaN);
+    .filter(isNaNInverse);
+}
+
+function hasLength({ length }: { length: number }): boolean {
+  return length > 0;
+}
+
+function isNaNInverse(n: number): boolean {
+  return !Number.isNaN(n);
 }

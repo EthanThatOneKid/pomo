@@ -5,7 +5,7 @@ export class Cycle {
   constructor(
     public readonly periods: number[],
   ) {
-    this.data = [];
+    this.data = [0];
     this.total = 0;
     for (const period of periods) {
       this.total += period;
@@ -28,16 +28,16 @@ export class Cycle {
 
     let lo = 0;
     let hi = this.data.length - 1;
-    while (lo <= hi) {
-      const mid = Math.trunc((lo + hi) * 0.5);
+    while (lo < hi) {
+      const mid = Math.trunc((lo + hi) / 2);
       if (n < this.data[mid]) {
-        hi = mid - 1;
-      } else if (n >= this.data[mid]) {
+        hi = mid;
+      } else {
         lo = mid + 1;
       }
     }
 
-    return lo;
+    return this.next(lo, -1);
   }
 
   /**
