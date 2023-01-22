@@ -47,7 +47,21 @@ Deno.test("Pomo.infinite", () => {
 });
 
 Deno.test("Pomo.fromPattern", () => {
-  const dayLength = 60 * 24;
-  const pomo = Pomo.fromPattern("25w5b25w5b25w10b", dayLength, 0);
-  assertEquals(pomo.cycle.periods, [25, 5, 25, 5, 25, 10]);
+  const pomo = Pomo.fromPattern({
+    pattern: "25w5b25w5b25w10b",
+    dayLength: 60 * 24,
+    ref: 0,
+    scale: 1 * 60 * 1e3,
+  });
+  assertEquals(
+    pomo.cycle.periods,
+    [
+      1500000,
+      300000,
+      1500000,
+      300000,
+      1500000,
+      600000,
+    ],
+  );
 });

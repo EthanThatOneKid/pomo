@@ -1,4 +1,37 @@
 import { Cycle } from "./cycle.ts";
+import { parsePattern } from "./pattern.ts";
+import type { PatternOptions } from "./pattern.ts";
+
+export class Pomo {
+  constructor(
+    /**
+     * The cycle of the pomo.
+     *
+     * Such that the odd periods are work periods and the even periods are
+     * break periods.
+     */
+    public readonly cycle: Cycle,
+    /** The length of a day in the same unit as the cycle. */
+    public readonly dayLength: number,
+    /** The number for the cycle to reference. */
+    public readonly ref: number,
+  ) {}
+
+  public get infinite(): boolean {
+    return this.cycle.periods.length % 2 === 0 &&
+      this.dayLength % this.cycle.total === 0;
+  }
+
+  public at(n: number): PomoStamp {
+    return new PomoStamp(this, n);
+  }
+
+  public static fromPattern(options: PatternOptions): Pomo {
+    const periods = parsePattern(options.pattern, options.scale ?? 1);
+    const cycle = new Cycle(periods);
+    return new Pomo(cycle, options.dayLength, options.ref);
+  }
+}
 
 export class PomoStamp {
   /** The amount of elapsed values. */
@@ -57,61 +90,4 @@ export class PomoStamp {
   public get end(): number {
     return this.start + this.duration;
   }
-}
-
-export class Pomo {
-  constructor(
-    /**
-     * The cycle of the pomo.
-     *
-     * Such that the odd periods are work periods and the even periods are
-     * break periods.
-     */
-    public readonly cycle: Cycle,
-    /** The length of a day in the same unit as the cycle. */
-    public readonly dayLength: number,
-    /** The number for the cycle to reference. */
-    public readonly ref: number,
-  ) {}
-
-  public get infinite(): boolean {
-    return this.cycle.periods.length % 2 === 0 &&
-      this.dayLength % this.cycle.total === 0;
-  }
-
-  public at(n: number): PomoStamp {
-    return new PomoStamp(this, n);
-  }
-
-  public static fromPattern(
-    pattern: string,
-    dayLength: number,
-    ref: number,
-  ): Pomo {
-    const periods = parsePattern(pattern);
-    const cycle = new Cycle(periods);
-    return new Pomo(cycle, dayLength, ref);
-  }
-}
-
-/**
- * parsePattern parses a string of numbers separated by non-digits.
- *
- * Example pattern:
- * "25w5b25w5b25w25b10"
- */
-export function parsePattern(pattern: string): number[] {
-  return pattern
-    .split(/\D+/)
-    .filter(hasLength)
-    .map(Number)
-    .filter(isNaNInverse);
-}
-
-function hasLength({ length }: { length: number }): boolean {
-  return length > 0;
-}
-
-function isNaNInverse(n: number): boolean {
-  return !Number.isNaN(n);
 }
