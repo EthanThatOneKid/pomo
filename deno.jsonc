@@ -8,7 +8,7 @@
     "fmt": "deno fmt",
     "udd": "deno run -r --allow-read=. --allow-write=. --allow-net https://deno.land/x/udd/main.ts dev_deps.ts && deno task lock",
     "lock": "deno cache --lock=deno.lock --lock-write dev_deps.ts",
-    "all": "deno task lint && deno task fmt && deno task udd",
+    "all": "deno task udd && deno task lint && deno task fmt",
     "build:npm": "deno run -A tasks/build_npm.ts"
   }
 }
