@@ -1,6 +1,7 @@
-import { build, emptyDir } from "https://deno.land/x/dnt@0.33.0/mod.ts";
+// Run:
+// deno run -A tasks/build_npm.ts $VERSION
 
-const VERSION = "0.1.0";
+import { build, emptyDir } from "https://deno.land/x/dnt@0.33.0/mod.ts";
 
 await emptyDir("./npm");
 
@@ -15,7 +16,7 @@ await build({
   package: {
     // package.json properties
     name: "pomo",
-    version: VERSION,
+    version: Deno.args[0],
     description: "Pomodoro utility module.",
     license: "MIT",
     repository: {
