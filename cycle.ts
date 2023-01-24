@@ -1,3 +1,6 @@
+/**
+ * A Cycle is an array of numbers that repeat indefinitely.
+ */
 export class Cycle {
   public readonly data: number[];
   public readonly total: number;
