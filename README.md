@@ -29,11 +29,17 @@ import { format, Pomo } from "pomo";
 ### Example usage
 
 ```ts
+// Options for creating a pomo from a pattern
+const pattern = "25w5b"; // 25 minutes of work, 5 minutes of break
+const dayLength = 1 * 24 * 60 * 60 * 1e3; // 1 day in milliseconds
+const ref = new Date().setHours(0, 0, 0, 0); // Previous midnight
+const scale = 1 * 60 * 1e3; // Scale minutes in pattern to milliseconds
+
 const pomo = Pomo.fromPattern({
-  pattern: "25w5b25w5b25w5b25w15b",
-  dayLength: 25 * 60 * 1000,
-  dayStart: new Date().setHours(0, 0, 0, 0),
-  scale: 1 * 60 * 1e3, // Scale minutes in pattern to milliseconds (default = 1).
+  pattern, // required
+  dayLength, // required
+  ref, // required
+  scale, // default = 1
 });
 
 const stamp = pomo.at(new Date().getTime());
