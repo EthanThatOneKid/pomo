@@ -21,7 +21,7 @@ jobs:
         with:
           deno-version: ${{ matrix.deno-version }}
 
-      - run: deno task lint && git diff --exit-code
-      - run: deno task fmt && git diff --exit-code
-      - run: deno task udd && git diff --exit-code
+      - run: deno task lint && git diff-index --quiet HEAD
+      - run: deno task fmt && git diff-index --quiet HEAD
+      - run: deno task udd && git diff-index --quiet HEAD
       - run: deno test

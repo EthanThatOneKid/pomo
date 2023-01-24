@@ -42,8 +42,8 @@ Deno.test("PomoStamp.end (2)", () => {
   assertEquals(stamp.end, 110);
 });
 
-Deno.test("Pomo.infinite", () => {
-  assertEquals(TEST_POMO.infinite, true);
+Deno.test("Pomo.eternal", () => {
+  assertEquals(TEST_POMO.eternal, true);
 });
 
 Deno.test("Pomo.fromPattern", () => {

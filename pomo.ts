@@ -2,6 +2,9 @@ import { Cycle } from "./cycle.ts";
 import { parsePattern } from "./pattern.ts";
 import type { PatternOptions } from "./pattern.ts";
 
+/**
+ * A Pomo is a cycle of work and break periods.
+ */
 export class Pomo {
   constructor(
     /**
@@ -17,15 +20,36 @@ export class Pomo {
     public readonly ref: number,
   ) {}
 
-  public get infinite(): boolean {
+  /** Whether or not the pomo is eternal. */
+  public get eternal(): boolean {
     return this.cycle.periods.length % 2 === 0 &&
       this.dayLength % this.cycle.total === 0;
   }
 
+  /** The stamp at the given number. */
   public at(n: number): PomoStamp {
     return new PomoStamp(this, n);
   }
 
+  /**
+   * Create a pomo from a pattern.
+   *
+   * Example:
+   * ```ts
+   * // Options for creating a pomo from a pattern
+   * const pattern = "25w5b", // 25 minutes of work, 5 minutes of break
+   * const dayLength = 1 * 24 * 60 * 60 * 1e3, // 1 day in milliseconds
+   * const ref = new Date().setHours(0, 0, 0, 0), // Previous midnight
+   * const scale = 1 * 60 * 1e3, // Scale minutes in pattern to milliseconds
+   *
+   * const pomo = Pomo.fromPattern({
+   *  pattern, // required
+   *  dayLength, // required
+   *  ref, // required
+   *  scale, // default = 1
+   * });
+   * ```
+   */
   public static fromPattern(options: PatternOptions): Pomo {
     const periods = parsePattern(options.pattern, options.scale ?? 1);
     const cycle = new Cycle(periods);
