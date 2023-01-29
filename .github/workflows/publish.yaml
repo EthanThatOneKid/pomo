@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        ref: main
 
     - uses: denoland/setup-deno@v1
       with:
@@ -25,15 +27,20 @@ jobs:
     - name: Copy contents of npm/ to temp directory
       run: cp -r npm/* ~/temp/
 
-    - name: Remove all files and directories in the root directory
+    - name: Check if npm branch exists
+      run: |
+        git rev-parse --verify npm || \
+        git checkout -b npm
+
+    - name: Remove all files and directories in the npm branch
       run: rm -rf *
 
-    - name: Copy contents of temp to the root
+    - name: Copy contents of temp to the npm branch
       run: cp -r ~/temp/* .
 
-    - name: Check for changes
-      run: git diff-index --quiet HEAD
+    - name: Check for changes on npm branch
+      run: git diff --exit-code HEAD
 
     - name: Deploy to npm branch
       if: success()
-      run: git push origin HEAD:npm
+      run: git add . && git commit -m "Publish build output" && git push origin npm
