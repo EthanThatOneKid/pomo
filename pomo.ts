@@ -57,6 +57,9 @@ export class Pomo {
   }
 }
 
+/**
+ * A PomoStamp is a stamp of a pomo at a given number.
+ */
 export class PomoStamp {
   /** The amount of elapsed values. */
   public readonly elapsed: number;
