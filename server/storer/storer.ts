@@ -1,5 +1,6 @@
-import type { ColumnType, SelectQueryBuilder } from "../deps.ts";
-import { Kysely, PostgresDialect, sql, z } from "../deps.ts";
+import type { SelectQueryBuilder } from "../deps.ts";
+import { Kysely, PostgresDialect, sql } from "../deps.ts";
+import { StoredPatternTableDescriptor } from "../v8n/stored_pattern_table_descriptor.ts";
 
 // deno-lint-ignore no-explicit-any
 const DATABASE_URI = Deno.env.get("DATABASE_URI") as any;
@@ -9,12 +10,16 @@ if (!DATABASE_URI) {
 
 export function getPgStorer<T>() {
   return new Kysely<T>({
+    log: ["query", "error"],
+
     /**
      * TODO: Set $DATABASE_URI to the database URI in your environment.
      */
     dialect: new PostgresDialect(DATABASE_URI),
   });
 }
+
+export type StoredPatternStorer = Kysely<StoredPatternTableDescriptor>;
 
 /**
  * JSONB aggregation function for Kysely and Postgres.
@@ -33,49 +38,3 @@ export function jsonb_agg<
     O[]
   >`coalesce((select jsonb_agg(x) from (${qb}) x), '[]'::jsonb)`;
 }
-
-/** Zod utils. */
-export const zutils = {
-  generatedString(): z.ZodType<
-    ColumnType<string, never, never>
-  > {
-    return z.lazy(() =>
-      z.object({
-        __select__: z.string(),
-        __insert__: z.never(),
-        __update__: z.never(),
-      })
-    );
-  },
-
-  generatedNumber(): z.ZodType<
-    ColumnType<number, never, never>
-  > {
-    z.lazy(() =>
-      z.object({
-        __select__: z.number(),
-        __insert__: z.never(),
-        __update__: z.never(),
-      })
-    );
-  },
-
-  dateType(): z.ZodType<
-    ColumnType<Date, Date | string | undefined, Date | string>
-  > {
-    return z.lazy(() =>
-      z.object({
-        __select__: z.date(),
-        __insert__: z.date().or(z.string().or(z.undefined())),
-        __update__: z.date().or(z.string()),
-      })
-    );
-  },
-
-  timestamps() {
-    return {
-      created_at: this.dateType(),
-      updated_at: this.dateType(),
-    };
-  },
-};
