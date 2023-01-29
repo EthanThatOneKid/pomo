@@ -1,0 +1,43 @@
+name: publish
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - uses: denoland/setup-deno@v1
+      with:
+        deno-version: canary
+
+    - name: Run build script
+      run: deno run -A tasks/build_npm.ts $GITHUB_SHA
+
+    - name: Create temporary directory
+      run: mkdir ~/temp
+
+    - name: Copy contents of npm/ to temp directory
+      run: cp -r npm/* ~/temp/
+
+    - name: Checkout npm branch or create if not exists
+      run: |
+        git rev-parse --verify npm || git checkout --orphan npm
+
+    - name: Remove all files and directories in the npm/ directory
+      run: rm -rf *
+
+    - name: Copy contents of temp to npm/
+      run: cp -r ~/temp/* .
+
+    - name: Check for changes on npm branch
+      run: git diff-index --quiet $(git rev-parse --abbrev-ref HEAD)
+
+    - name: Deploy to npm branch
+      if: success()
+      run: git push -u origin $(git rev-parse --abbrev-ref HEAD)
