@@ -36,8 +36,6 @@ jobs:
       run: cp -r ~/temp/* .
 
     - name: Check for changes on npm branch
-      run: git diff-index --quiet $(git rev-parse --abbrev-ref HEAD)
-
-    - name: Deploy to npm branch
-      if: success()
-      run: git push -u origin $(git rev-parse --abbrev-ref HEAD)
+      run: |
+        git diff-index --quiet $(git rev-parse --abbrev-ref HEAD) || \
+        git push -u origin $(git rev-parse --abbrev-ref HEAD)
