@@ -29,6 +29,8 @@ jobs:
 
     - name: Check if npm branch exists
       run: |
+        # Check if the npm branch exists
+        # If it doesn't exist, create it
         git rev-parse --verify npm || \
         git checkout -b npm
 
@@ -42,5 +44,10 @@ jobs:
       run: git diff --exit-code HEAD
 
     - name: Deploy to npm branch
+      # If the previous step succeeded (i.e., there are changes), deploy to npm branch
       if: success()
-      run: git add . && git commit -m "Publish build output" && git push origin npm
+      run: |
+        # Stage the changes, commit, and push
+        git add . && \
+        git commit -m "Publish build output" && \
+        git push origin npm
