@@ -19,7 +19,7 @@ jobs:
         deno-version: canary
 
     - name: Run build script
-      run: deno run -A tasks/build_npm.ts $GITHUB_SHA
+      run: deno run -A tasks/build_npm.ts ${{ $GITHUB_SHA }}
 
     - name: Create temporary directory
       run: mkdir ~/temp
