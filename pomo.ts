@@ -36,18 +36,21 @@ export class Pomo {
    *
    * Example:
    * ```ts
-   * // Options for creating a pomo from a pattern.
+   * // Options for creating a pomo from a pattern
    * const pattern = "25w5b"; // 25 minutes of work, 5 minutes of break
    * const dayLength = 1 * 24 * 60 * 60 * 1e3; // 1 day in milliseconds
-   * const ref = new Date().setHours(0, 0, 0, 0); // Previous midnight
+   * const ref = new Date(new Date().setHours(0, 0, 0, 0)).valueOf(); // Previous midnight
    * const scale = 1 * 60 * 1e3; // Scale minutes in pattern to milliseconds
    *
    * const pomo = Pomo.fromPattern({
-   *  pattern, // required
-   *  dayLength, // required
-   *  ref, // required
-   *  scale, // default = 1
+   *   pattern, // required
+   *   dayLength, // required
+   *   ref, // required
+   *   scale, // default = 1
    * });
+   *
+   * const stamp = pomo.at(new Date().valueOf());
+   * console.log(format(stamp.timeout, "HH:mm:ss.SSS"));
    * ```
    */
   public static fromPattern(options: PatternOptions): Pomo {
