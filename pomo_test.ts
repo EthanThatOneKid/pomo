@@ -17,9 +17,9 @@ Deno.test("PomoStamp.work", () => {
   assertEquals(stamp4.work, false);
 });
 
-Deno.test("PomoStamp.until", () => {
+Deno.test("PomoStamp.timeout", () => {
   const stamp = TEST_POMO.at(1);
-  assertEquals(stamp.until, 4);
+  assertEquals(stamp.timeout, 4);
 });
 
 Deno.test("PomoStamp.duration", () => {
@@ -56,12 +56,12 @@ Deno.test("Pomo.fromPattern", () => {
   assertEquals(
     pomo.cycle.periods,
     [
-      1500000,
-      300000,
-      1500000,
-      300000,
-      1500000,
-      600000,
+      1_500_000,
+      300_000,
+      1_500_000,
+      300_000,
+      1_500_000,
+      600_000,
     ],
   );
 });

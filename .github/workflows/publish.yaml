@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        ref: main
 
     - uses: denoland/setup-deno@v1
       with:
@@ -19,21 +21,19 @@ jobs:
     - name: Run build script
       run: deno run -A tasks/build_npm.ts $GITHUB_SHA
 
-    - name: Create temporary directory
-      run: mkdir ~/temp
+    - name: Checkout new branch for npm/ content
+      run: |
+        git checkout -B npm || git checkout npm
+        git rm -rf .
+        cp -r npm/* .
+        rm -rf npm
+        git config --global user.email "me@example.com"
+        git config --global user.name "https://etok.codes/pomo/blob/main/.github/workflows/publish.yaml"
+        git add .
+        git commit -m "Publish npm ✨"
 
-    - name: Copy contents of npm/ to temp directory
-      run: cp -r npm/* ~/temp/
-
-    - name: Remove all files and directories in the root directory
-      run: rm -rf *
-
-    - name: Copy contents of temp to the root
-      run: cp -r ~/temp/* .
-
-    - name: Check for changes
-      run: git diff-index --quiet HEAD
-
-    - name: Deploy to npm branch
-      if: success()
-      run: git push origin HEAD:npm
+    - name: Push new branch to remote
+      run: |
+        # Replace with the appropriate remote repository URL
+        # Example: git push --force origin npm
+        git push --force -u origin npm
