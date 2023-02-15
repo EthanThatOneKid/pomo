@@ -38,9 +38,9 @@ export class Pomo {
    * ```ts
    * // Options for creating a pomo from a pattern
    * const pattern = "25w5b"; // 25 minutes of work, 5 minutes of break
-   * const dayLength = 1 * 24 * 60 * 60 * 1e3; // 1 day in milliseconds
+   * const dayLength = DAY; // 1 day in milliseconds
    * const ref = new Date(new Date().setHours(0, 0, 0, 0)).valueOf(); // Previous midnight
-   * const scale = 1 * 60 * 1e3; // Scale minutes in pattern to milliseconds
+   * const scale = MINUTE; // Scale minutes in pattern to milliseconds
    *
    * const pomo = Pomo.fromPattern({
    *   pattern, // required
