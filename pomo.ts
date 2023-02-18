@@ -102,7 +102,7 @@ export class PomoStamp {
 
   /** The number remaining until the next period. */
   public get timeout(): number {
-    return this.duration - this.remainder;
+    return this.pomo.cycle.data[this.index + 1] - this.remainder;
   }
 
   /** The duration of the period. */
