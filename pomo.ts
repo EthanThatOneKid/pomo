@@ -81,9 +81,6 @@ export class PomoStamp {
   /** The index of the period in the cycle. */
   public readonly index: number;
 
-  /** The index of the previous period in the cycle. */
-  public readonly previousIndex: number;
-
   constructor(
     public readonly pomo: Pomo,
     public readonly n: number,
@@ -92,7 +89,6 @@ export class PomoStamp {
     this.cycle = Math.trunc(this.elapsed / pomo.cycle.total);
     this.remainder = this.elapsed % pomo.cycle.total;
     this.index = pomo.cycle.at(this.n);
-    this.previousIndex = pomo.cycle.next(this.index, -1);
   }
 
   /** Whether or not the period is a work period. */
