@@ -78,14 +78,8 @@ export class PomoStamp {
   /** The amount of elapsed periods. */
   public readonly remainder: number;
 
-  /** The index of the period in the cycle. */
-  public readonly index: number;
-
-  /** The index of the previous period in the cycle. */
-  public readonly previousIndex: number;
-
-  /** The index of the next period in the cycle. */
-  public readonly nextIndex: number;
+  /** The period index of the cycle. */
+  public readonly period: number;
 
   constructor(
     public readonly pomo: Pomo,
@@ -94,30 +88,28 @@ export class PomoStamp {
     this.elapsed = n - pomo.ref;
     this.cycle = Math.trunc(this.elapsed / pomo.cycle.total);
     this.remainder = this.elapsed % pomo.cycle.total;
-    this.index = pomo.cycle.at(this.n);
-    this.previousIndex = pomo.cycle.next(this.index, -1);
-    this.nextIndex = pomo.cycle.next(this.index, 1);
+    this.period = pomo.cycle.at(this.n);
   }
 
   /** Whether or not the period is a work period. */
   public get work(): boolean {
-    return this.index % 2 === 0;
+    return this.period % 2 === 0;
   }
 
   /** The number remaining until the next period. */
   public get timeout(): number {
-    return this.pomo.cycle.data[this.index + 1] - this.remainder;
+    return this.pomo.cycle.data[this.period + 1] - this.remainder;
   }
 
   /** The duration of the period. */
   public get duration(): number {
-    return this.pomo.cycle.periods[this.index];
+    return this.pomo.cycle.periods[this.period];
   }
 
   /** The start of the period. */
   public get start(): number {
     return this.n - this.remainder +
-      this.pomo.cycle.data[this.index];
+      this.pomo.cycle.data[this.period];
   }
 
   /** The end of the period. */
