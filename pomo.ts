@@ -120,4 +120,35 @@ export class PomoStamp {
   public get end(): number {
     return this.start + this.duration;
   }
+
+  public get timing(): Timing {
+    const timing = makeTiming(this.pomo.cycle.total);
+
+    let timeout = this.timeout;
+    let index = this.pomo.cycle.next(this.index);
+
+    for (let i = 0; i < this.pomo.cycle.periods.length; i++) {
+      timing.periods.push({ index, timeout });
+      timeout += this.pomo.cycle.periods[index];
+      index = this.pomo.cycle.next(index);
+    }
+
+    timing.periods = timing.periods.sort((a, b) => a.timeout - b.timeout);
+    return timing;
+  }
+}
+
+/**
+ * A timing is a set of periods and an interval.
+ */
+export interface Timing {
+  periods: {
+    index: number;
+    timeout: number;
+  }[];
+  interval: number;
+}
+
+function makeTiming(interval: number): Timing {
+  return { periods: [], interval };
 }
