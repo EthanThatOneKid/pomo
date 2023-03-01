@@ -1,5 +1,4 @@
-import { DAY, format, MINUTE, Pomo } from "../../mod.ts";
-import { Timing, timings } from "../../timings.ts";
+import { DAY, format, MINUTE, Pomo, Timing } from "../../mod.ts";
 
 export interface GetPomoInput {
   pattern: string;
@@ -11,7 +10,7 @@ export interface GetPomoOutput {
   elapsed: number;
   cycle: number;
   remainder: number;
-  index: number;
+  period: number;
   work: boolean;
   break: boolean;
   timeout: number;
@@ -21,7 +20,7 @@ export interface GetPomoOutput {
   timestamp: string;
   ref: number;
   text: string;
-  timings: Timing[];
+  timing: Timing;
 }
 
 export function get(input: GetPomoInput): GetPomoOutput {
@@ -38,33 +37,29 @@ export function get(input: GetPomoInput): GetPomoOutput {
   const elapsed = stamp.elapsed;
   const cycle = stamp.cycle;
   const remainder = stamp.remainder;
-  const index = stamp.index;
+  const period = stamp.period;
   const work = stamp.work;
   const timeout = stamp.timeout;
   const duration = stamp.duration;
   const start = stamp.start;
   const end = stamp.end;
+  const timing = stamp.timing;
 
   return {
     elapsed,
     cycle,
     remainder,
-    index,
+    period,
     work,
     break: !work,
     timeout,
     duration,
     start,
     end,
+    timing,
     timestamp: date.toString(),
     ref,
     text: format(stamp.timeout, input.format ?? "HH:mm:ss.SSS"),
-    timings: timings({
-      patterns: {
-        [input.pattern]: input.pattern,
-      },
-      timestamp: input.timestamp,
-    }),
   };
 }
 

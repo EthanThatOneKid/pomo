@@ -1,11 +1,15 @@
 import { serve } from "./deps.ts";
 
-import { PORT } from "./env.ts";
+import { POMO_PATTERNS, PORT } from "./env.ts";
 import * as pomo from "./pomo/mod.ts";
 import * as discord from "./discord/mod.ts";
 
 if (import.meta.main) {
-  // const timings = getTimings(
+  const timings = pomo.timingsFromPatterns(POMO_PATTERNS);
+  const ids = pomo.start(timings, (i) => {
+    discord.webhook({
+      content: `Pomo ${i + 1} started!`,
+    })
 
   await serve(handle, {
     port: PORT,
@@ -13,6 +17,8 @@ if (import.meta.main) {
       console.log(`Listening on ${hostname}:${port}`);
     },
   });
+
+  pomo.cancel(ids);
 }
 
 function handle(request: Request): Response {
