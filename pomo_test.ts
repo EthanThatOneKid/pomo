@@ -1,6 +1,7 @@
 import { assertEquals } from "./dev_deps.ts";
 import { Pomo } from "./pomo.ts";
 import { Cycle } from "./cycle.ts";
+import { DAY, MINUTE } from "./duration.ts";
 
 const TEST_CYCLE = new Cycle([5, 5, 5, 5]);
 const TEST_POMO = new Pomo(TEST_CYCLE, 100, 0);
@@ -52,6 +53,43 @@ Deno.test("PomoStamp.end (2)", () => {
   assertEquals(stamp.end, 110);
 });
 
+Deno.test("PomoStamp.timing - returns correct values for first example", () => {
+  const pomo = new Pomo(
+    new Cycle([5, 10, 15]),
+    0,
+    0,
+  );
+  const stamp = pomo.at(26);
+  const expected = {
+    periods: [
+      { index: 0, timeout: 4 },
+      { index: 1, timeout: 9 },
+      { index: 2, timeout: 19 },
+    ],
+    interval: 30,
+  };
+  assertEquals(stamp.timing, expected);
+});
+
+Deno.test("PomoStamp.timing - returns correct values for second example", () => {
+  const pomo = new Pomo(
+    new Cycle([5, 10, 15]),
+    0,
+    0,
+  );
+
+  const stamp = pomo.at(33);
+  const expected = {
+    periods: [
+      { index: 1, timeout: 2 },
+      { index: 2, timeout: 12 },
+      { index: 0, timeout: 27 },
+    ],
+    interval: 30,
+  };
+  assertEquals(stamp.timing, expected);
+});
+
 Deno.test("Pomo.eternal", () => {
   assertEquals(TEST_POMO.eternal, true);
 });
@@ -59,19 +97,19 @@ Deno.test("Pomo.eternal", () => {
 Deno.test("Pomo.fromPattern", () => {
   const pomo = Pomo.fromPattern({
     pattern: "25w5b25w5b25w10b",
-    dayLength: 60 * 24,
+    dayLength: DAY,
     ref: 0,
-    scale: 1 * 60 * 1e3,
+    scale: MINUTE,
   });
   assertEquals(
     pomo.cycle.periods,
     [
-      1500000,
-      300000,
-      1500000,
-      300000,
-      1500000,
-      600000,
+      1_500_000,
+      300_000,
+      1_500_000,
+      300_000,
+      1_500_000,
+      600_000,
     ],
   );
 });

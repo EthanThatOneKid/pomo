@@ -81,9 +81,6 @@ export class PomoStamp {
   /** The index of the period in the cycle. */
   public readonly index: number;
 
-  /** The index of the previous period in the cycle. */
-  public readonly previousIndex: number;
-
   constructor(
     public readonly pomo: Pomo,
     public readonly n: number,
@@ -92,7 +89,6 @@ export class PomoStamp {
     this.cycle = Math.trunc(this.elapsed / pomo.cycle.total);
     this.remainder = this.elapsed % pomo.cycle.total;
     this.index = pomo.cycle.at(this.n);
-    this.previousIndex = pomo.cycle.next(this.index, -1);
   }
 
   /** Whether or not the period is a work period. */
@@ -120,4 +116,35 @@ export class PomoStamp {
   public get end(): number {
     return this.start + this.duration;
   }
+
+  public get timing(): Timing {
+    const timing = makeTiming(this.pomo.cycle.total);
+
+    let timeout = this.timeout;
+    let index = this.pomo.cycle.next(this.index);
+
+    for (let i = 0; i < this.pomo.cycle.periods.length; i++) {
+      timing.periods.push({ index, timeout });
+      timeout += this.pomo.cycle.periods[index];
+      index = this.pomo.cycle.next(index);
+    }
+
+    timing.periods = timing.periods.sort((a, b) => a.timeout - b.timeout);
+    return timing;
+  }
+}
+
+/**
+ * A timing is a set of periods and an interval.
+ */
+export interface Timing {
+  periods: {
+    index: number;
+    timeout: number;
+  }[];
+  interval: number;
+}
+
+function makeTiming(interval: number): Timing {
+  return { periods: [], interval };
 }
