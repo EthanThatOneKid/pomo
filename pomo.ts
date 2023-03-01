@@ -79,10 +79,7 @@ export class PomoStamp {
   public readonly remainder: number;
 
   /** The index of the period in the cycle. */
-  public readonly index: number;
-
-  /** The index of the previous period in the cycle. */
-  public readonly previousIndex: number;
+  public readonly period: number;
 
   constructor(
     public readonly pomo: Pomo,
@@ -91,33 +88,63 @@ export class PomoStamp {
     this.elapsed = n - pomo.ref;
     this.cycle = Math.trunc(this.elapsed / pomo.cycle.total);
     this.remainder = this.elapsed % pomo.cycle.total;
-    this.index = pomo.cycle.at(this.n);
-    this.previousIndex = pomo.cycle.next(this.index, -1);
+    this.period = pomo.cycle.at(this.n);
   }
 
   /** Whether or not the period is a work period. */
   public get work(): boolean {
-    return this.index % 2 === 0;
+    return this.period % 2 === 0;
   }
 
   /** The number remaining until the next period. */
   public get timeout(): number {
-    return this.pomo.cycle.data[this.index + 1] - this.remainder;
+    return this.pomo.cycle.data[this.period + 1] - this.remainder;
   }
 
   /** The duration of the period. */
   public get duration(): number {
-    return this.pomo.cycle.periods[this.index];
+    return this.pomo.cycle.periods[this.period];
   }
 
   /** The start of the period. */
   public get start(): number {
     return this.n - this.remainder +
-      this.pomo.cycle.data[this.index];
+      this.pomo.cycle.data[this.period];
   }
 
   /** The end of the period. */
   public get end(): number {
     return this.start + this.duration;
   }
+
+  public get timing(): Timing {
+    const timing = makeTiming(this.pomo.cycle.total);
+
+    let timeout = this.timeout;
+    let index = this.pomo.cycle.next(this.period);
+
+    for (let i = 0; i < this.pomo.cycle.periods.length; i++) {
+      timing.periods.push({ index, timeout });
+      timeout += this.pomo.cycle.periods[index];
+      index = this.pomo.cycle.next(index);
+    }
+
+    timing.periods = timing.periods.sort((a, b) => a.timeout - b.timeout);
+    return timing;
+  }
+}
+
+/**
+ * A timing is a set of periods and an interval.
+ */
+export interface Timing {
+  periods: {
+    index: number;
+    timeout: number;
+  }[];
+  interval: number;
+}
+
+function makeTiming(interval: number): Timing {
+  return { periods: [], interval };
 }
