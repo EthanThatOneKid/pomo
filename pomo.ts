@@ -78,7 +78,7 @@ export class PomoStamp {
   /** The amount of elapsed periods. */
   public readonly remainder: number;
 
-  /** The period index of the cycle. */
+  /** The index of the period in the cycle. */
   public readonly period: number;
 
   constructor(
@@ -121,7 +121,7 @@ export class PomoStamp {
     const timing = makeTiming(this.pomo.cycle.total);
 
     let timeout = this.timeout;
-    let index = this.pomo.cycle.next(this.index);
+    let index = this.pomo.cycle.next(this.period);
 
     for (let i = 0; i < this.pomo.cycle.periods.length; i++) {
       timing.periods.push({ index, timeout });
