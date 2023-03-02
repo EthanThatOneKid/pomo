@@ -1,5 +1,6 @@
 import type { PomoStamp, Timing } from "./pomo.ts";
 import { Pomo } from "./pomo.ts";
+import { DAY, MINUTE } from "./duration.ts";
 
 export class PomoCollection {
   constructor(
@@ -16,5 +17,25 @@ export class PomoCollection {
 
   public static timingsOf(stamps: PomoStamp[]): Timing[] {
     return stamps.map((stamp) => stamp.timing);
+  }
+
+  public static fromString(
+    patterns: string,
+    timestamp = new Date().getTime(),
+  ): PomoCollection {
+    const ref = new Date(timestamp).setHours(0, 0, 0, 0);
+    return new PomoCollection(
+      patterns
+        .split(";")
+        .filter(Boolean)
+        .map((pattern) =>
+          Pomo.fromPattern({
+            pattern,
+            ref,
+            dayLength: DAY,
+            scale: MINUTE,
+          })
+        ),
+    );
   }
 }
