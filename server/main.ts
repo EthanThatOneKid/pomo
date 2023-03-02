@@ -1,20 +1,35 @@
 import { serve } from "./deps.ts";
 
-import { POMO_PATTERNS, PORT } from "./env.ts";
+import { PomoCollection } from "../mod.ts";
+
 import * as pomo from "./pomo/mod.ts";
 import * as discord from "./discord/mod.ts";
+import { DISCORD_WEBHOOK_URL, POMO_PATTERNS, PORT } from "./env.ts";
 
 if (import.meta.main) {
-  const timings = pomo.timingsFromPatterns(POMO_PATTERNS);
-  const ids = pomo.start(timings, (i) => {
-    discord.webhook({
-      content: `Pomo ${i + 1} started!`,
-    })
+  const dayStart = new Date().setHours(0, 0, 0, 0);
+  const collection = PomoCollection.fromString(
+    POMO_PATTERNS,
+    dayStart,
+  );
+
+  const timestamp = new Date().getTime();
+  const ids = pomo.start(
+    collection,
+    timestamp,
+    async (name, period) => {
+      const response = await discord.webhook({
+        url: DISCORD_WEBHOOK_URL,
+        content: pomo.formatMessage(collection, name, period),
+      });
+      console.log(response.status, response.statusText, await response.text());
+    },
+  );
 
   await serve(handle, {
     port: PORT,
-    onListen({ hostname, port }) {
-      console.log(`Listening on ${hostname}:${port}`);
+    onListen({ port }) {
+      console.log(`Listening on http://localhost:${port}`);
     },
   });
 
@@ -33,9 +48,7 @@ function handle(request: Request): Response {
     }
 
     default: {
-      return new Response("Not Found", {
-        status: 404,
-      });
+      return new Response("Not Found", { status: 404 });
     }
   }
 }
