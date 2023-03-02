@@ -21,9 +21,8 @@ export class PomoCollection {
 
   public static fromString(
     patterns: string,
-    timestamp = new Date().getTime(),
+    ref: number,
   ): PomoCollection {
-    const ref = new Date(timestamp).setHours(0, 0, 0, 0);
     return new PomoCollection(
       patterns
         .split(";")

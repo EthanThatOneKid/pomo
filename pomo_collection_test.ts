@@ -1,24 +1,18 @@
 import { assertEquals } from "./dev_deps.ts";
 
-import { Pomo } from "./pomo.ts";
 import { PomoCollection } from "./pomo_collection.ts";
-import { DAY, MINUTE } from "./duration.ts";
+import { MINUTE } from "./duration.ts";
+
+Deno.test("PomoCollection.fromString returns correct PomoCollection", () => {
+  const collection = PomoCollection.fromString("25w5b;50w10b", 0);
+  assertEquals(collection.data.length, 2);
+  assertEquals(collection.data[0].cycle.periods, [25 * MINUTE, 5 * MINUTE]);
+  assertEquals(collection.data[1].cycle.periods, [50 * MINUTE, 10 * MINUTE]);
+});
 
 Deno.test("PomoCollection returns correct timings", () => {
   const REF = 0;
-  const pomo1 = Pomo.fromPattern({
-    pattern: "25w5b",
-    dayLength: DAY,
-    ref: REF,
-    scale: MINUTE,
-  });
-  const pomo2 = Pomo.fromPattern({
-    pattern: "50w10b",
-    dayLength: DAY,
-    ref: REF,
-    scale: MINUTE,
-  });
-  const collection = new PomoCollection([pomo1, pomo2]);
+  const collection = PomoCollection.fromString("25w5b;50w10b", REF);
   const timings = collection.timings(30 * MINUTE + REF);
   assertEquals(timings, [
     {
