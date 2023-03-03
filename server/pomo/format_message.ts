@@ -12,9 +12,9 @@ export function formatMessage(
   const currentPeriodDuration = collection.data[name].cycle.periods[period];
   const nextPeriodDuration = collection.data[name].cycle
     .periods[collection.data[name].cycle.next(period)];
-  return `🍅 <@&${name}> NOW: **${
+  return `🍅 <@&${name}> right now: **${
     format(currentPeriodDuration, "HH:mm")
-  }** ${currentPeriodStatus}; NEXT: **${
+  }** ${currentPeriodStatus}; next up: **${
     format(nextPeriodDuration, "HH:mm")
   }** ${nextPeriodStatus} 🍅`;
 }
