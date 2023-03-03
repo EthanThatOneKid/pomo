@@ -41,7 +41,9 @@ function handle(request: Request): Response {
   switch (true) {
     case url.pathname === "/": {
       return pomo.json({
-        pattern: url.searchParams.get("pattern") ?? "25 5 25 5 25 10",
+        patterns: url.searchParams.get("patterns") ??
+          url.searchParams.get("p") ??
+          POMO_PATTERNS,
         timestamp: url.searchParams.get("timestamp") || undefined,
         format: url.searchParams.get("format") || undefined,
       });

@@ -1,66 +1,66 @@
-import { DAY, format, MINUTE, Pomo, Timing } from "../../mod.ts";
+import { format, PomoCollection, Timing } from "../../mod.ts";
 
 export interface GetPomoInput {
-  pattern: string;
+  patterns: string;
   timestamp?: string;
   format?: string;
 }
 
 export interface GetPomoOutput {
-  elapsed: number;
-  cycle: number;
-  remainder: number;
-  period: number;
-  work: boolean;
-  break: boolean;
-  timeout: number;
-  duration: number;
-  start: number;
-  end: number;
-  timestamp: string;
-  ref: number;
-  text: string;
-  timing: Timing;
+  [key: string]: {
+    elapsed: number;
+    cycle: number;
+    remainder: number;
+    period: number;
+    work: boolean;
+    break: boolean;
+    timeout: number;
+    duration: number;
+    start: number;
+    end: number;
+    timestamp: number;
+    dayStart: number;
+    text: string;
+    timing: Timing;
+  };
 }
 
 export function get(input: GetPomoInput): GetPomoOutput {
-  const date = input.timestamp ? new Date(input.timestamp) : new Date();
-  const at = date.getTime();
-  const ref = date.setHours(0, 0, 0, 0);
-  const pomo = Pomo.fromPattern({
-    pattern: input.pattern,
-    dayLength: DAY,
-    scale: MINUTE,
-    ref,
-  });
-  const stamp = pomo.at(at);
-  const elapsed = stamp.elapsed;
-  const cycle = stamp.cycle;
-  const remainder = stamp.remainder;
-  const period = stamp.period;
-  const work = stamp.work;
-  const timeout = stamp.timeout;
-  const duration = stamp.duration;
-  const start = stamp.start;
-  const end = stamp.end;
-  const timing = stamp.timing;
+  const timestamp = new Date().getTime();
+  const dayStart = new Date(timestamp).setHours(0, 0, 0, 0);
+  const collection = PomoCollection.fromString(input.patterns, dayStart);
+  return Object.entries(collection.data).reduce((data, [name, pomo]) => {
+    const stamp = pomo.at(timestamp);
+    const elapsed = stamp.elapsed;
+    const cycle = stamp.cycle;
+    const remainder = stamp.remainder;
+    const period = stamp.period;
+    const work = stamp.work;
+    const timeout = stamp.timeout;
+    const duration = stamp.duration;
+    const start = stamp.start;
+    const end = stamp.end;
+    const timing = stamp.timing;
 
-  return {
-    elapsed,
-    cycle,
-    remainder,
-    period,
-    work,
-    break: !work,
-    timeout,
-    duration,
-    start,
-    end,
-    timing,
-    timestamp: date.toString(),
-    ref,
-    text: format(stamp.timeout, input.format ?? "HH:mm:ss.SSS"),
-  };
+    data[name] = {
+      elapsed,
+      cycle,
+      remainder,
+      period,
+      work,
+      break: !work,
+      timeout,
+      duration,
+      start,
+      end,
+      timing,
+      timestamp,
+      dayStart,
+      text: format(stamp.timeout, input.format ?? "HH:mm:ss.SSS"),
+    };
+
+    return data;
+  }, {} as GetPomoOutput);
 }
 
 export function json(input: GetPomoInput): Response {
