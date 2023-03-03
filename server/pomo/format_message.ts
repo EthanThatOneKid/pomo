@@ -6,7 +6,7 @@ export function formatMessage(
   period: number,
 ): string {
   const currentPeriodStatus = period % 2 === 0 ? "work" : "break";
-  const nextPeriodStatus = period % 2 === 0 ? "break" : "work";
+  const nextPeriodStatus = collection.data[name].cycle.next(period) % 2 === 0 ? "work" : "break";
   const currentPeriodDuration = collection.data[name].cycle.periods[period];
   const nextPeriodDuration = collection.data[name].cycle
     .periods[collection.data[name].cycle.next(period)];
