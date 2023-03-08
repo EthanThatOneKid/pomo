@@ -1,6 +1,6 @@
-# pomo 🍅
+# <https://deno.land/x/pomo> 🍅
 
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https://deno.land/x/pomo)
+[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https://etok.codes/pomo/raw/main/mod.ts)
 
 [Pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Technique) utility module.
 
