@@ -8,8 +8,7 @@ await emptyDir("./npm");
 await build({
   entryPoints: [
     "./mod.ts",
-    "./server/pomo/mod.ts",
-    "./server/discord/mod.ts",
+    "./server/pomo/types.ts",
   ],
   testPattern: "**/*_test.ts",
   outDir: "./npm",

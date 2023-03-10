@@ -1,29 +1,6 @@
-import { format, PomoCollection, Timing } from "../../mod.ts";
+import { format, PomoCollection } from "../../mod.ts";
 
-export interface GetPomoInput {
-  patterns: string;
-  timestamp?: string;
-  format?: string;
-}
-
-export interface GetPomoOutput {
-  [key: string]: {
-    elapsed: number;
-    cycle: number;
-    remainder: number;
-    period: number;
-    work: boolean;
-    break: boolean;
-    timeout: number;
-    duration: number;
-    start: number;
-    end: number;
-    timestamp: number;
-    dayStart: number;
-    text: string;
-    timing: Timing;
-  };
-}
+import { GetPomoInput, GetPomoOutput } from "./types.ts";
 
 export function get(input: GetPomoInput): GetPomoOutput {
   const timestamp = new Date().getTime();
