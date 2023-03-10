@@ -6,7 +6,11 @@ import { build, emptyDir } from "https://deno.land/x/dnt@0.33.0/mod.ts";
 await emptyDir("./npm");
 
 await build({
-  entryPoints: ["./mod.ts"],
+  entryPoints: [
+    "./mod.ts",
+    "./server/pomo/mod.ts",
+    "./server/discord/mod.ts",
+  ],
   testPattern: "**/*_test.ts",
   outDir: "./npm",
   // see JS docs for overview and more options
