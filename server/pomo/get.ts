@@ -41,5 +41,11 @@ export function get(input: GetPomoInput): GetPomoOutput {
 }
 
 export function json(input: GetPomoInput): Response {
-  return Response.json(get(input));
+  return Response.json(get(input), {
+    headers: new Headers({
+      "Access-Control-Allow-Origin": "https://acmcsuf.com",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+      "Access-Control-Allow-Headers": "Content-Type",
+    }),
+  });
 }
