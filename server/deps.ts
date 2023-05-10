@@ -1,3 +1,3 @@
-import "https://deno.land/std@0.179.0/dotenv/load.ts";
+import "https://deno.land/std@0.186.0/dotenv/load.ts";
 
-export { serve } from "https://deno.land/std@0.179.0/http/server.ts";
+export { serve } from "https://deno.land/std@0.186.0/http/server.ts";
