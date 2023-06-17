@@ -1,0 +1,46 @@
+{
+  "module": "./esm/mod.js",
+  "main": "./script/mod.js",
+  "types": "./types/mod.d.ts",
+  "name": "pomo",
+  "version": "90f41adff353fcc8d146ffd0a1b62fe3db893094",
+  "description": "Pomodoro utility module.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethanthatonekid/pomo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ethanthatonekid/pomo/issues"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./types/mod.d.ts",
+        "default": "./esm/mod.js"
+      },
+      "require": {
+        "types": "./types/mod.d.ts",
+        "default": "./script/mod.js"
+      }
+    },
+    "./server/pomo/types.js": {
+      "import": {
+        "types": "./types/server/pomo/types.d.ts",
+        "default": "./esm/server/pomo/types.js"
+      },
+      "require": {
+        "types": "./types/server/pomo/types.d.ts",
+        "default": "./script/server/pomo/types.js"
+      }
+    }
+  },
+  "scripts": {
+    "test": "node test_runner.js"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "chalk": "^4.1.2",
+    "@deno/shim-deno": "~0.12.0"
+  }
+}
