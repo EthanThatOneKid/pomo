@@ -1,4 +1,4 @@
-import { serve } from "./deps.ts";
+import { retry, serve } from "./deps.ts";
 
 import { PomoCollection } from "../mod.ts";
 
@@ -18,18 +18,31 @@ if (import.meta.main) {
     collection,
     timestamp,
     async (name, period) => {
-      const response = await discord.webhook({
-        url: DISCORD_WEBHOOK_URL,
-        content: pomo.formatMessage(collection, name, period),
-      });
+      const response = await retry(
+        () =>
+          discord.webhook({
+            url: DISCORD_WEBHOOK_URL,
+            content: pomo.formatMessage(collection, name, period),
+          }),
+        {
+          multiplier: 2,
+          maxTimeout: 60000,
+          maxAttempts: 5,
+          minTimeout: 100,
+        },
+      ).catch(console.error);
+      if (!response) {
+        return;
+      }
+
       console.log(response.status, response.statusText, await response.text());
     },
   );
 
   await serve(handle, {
     port: PORT,
-    onListen({ port }) {
-      console.log(`Listening on http://localhost:${port}`);
+    onListen() {
+      console.log(`Listening on http://localhost:${PORT}`);
     },
   });
 
