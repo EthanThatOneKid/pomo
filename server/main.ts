@@ -19,12 +19,11 @@ if (import.meta.main) {
     timestamp,
     async (name, period) => {
       const response = await retry(
-        () => {
-          return discord.webhook({
+        () =>
+          discord.webhook({
             url: DISCORD_WEBHOOK_URL,
             content: pomo.formatMessage(collection, name, period),
-          });
-        },
+          }),
         {
           multiplier: 2,
           maxTimeout: 60000,
@@ -42,8 +41,8 @@ if (import.meta.main) {
 
   await serve(handle, {
     port: PORT,
-    onListen({ port }) {
-      console.log(`Listening on http://localhost:${port}`);
+    onListen() {
+      console.log(`Listening on http://localhost:${PORT}`);
     },
   });
 
